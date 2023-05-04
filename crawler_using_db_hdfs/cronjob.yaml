@@ -1,0 +1,72 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: naverTextCrawler
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: crawing
+            image: joron1827/pyarrow:v3
+            imagePullPolicy: IfNotPresent
+            env:
+            - name: DBUSER
+              valueFrom:
+                sercretKeyRef:
+                  name: passed-in-args
+                  key: user
+            - name: PASSWD
+              valueFrom:
+                sercretKeyRef:
+                  name: passed-in-args
+                  key: passwd
+            - name: DBHOST
+              valueFrom:
+                sercretKeyRef:
+                  name: passed-in-args
+                  key: dbhost
+            - name: DBNAME
+              valueFrom:
+                sercretKeyRef:
+                  name: passed-in-args
+                  key: dbname
+            - name: HDFS
+              valueFrom:
+                sercretKeyRef:
+                  name: passed-in-args
+                  key: hdfs
+            - name: HDFSPORT
+              valueFrom:
+                sercretKeyRef:
+                  name: passed-in-args
+                  key: hdfsport
+            - name: HDFSPATH
+              valueFrom:
+                sercretKeyRef:
+                  name: passed-in-args
+                  key: hdfspath
+            command:
+            - sh
+            - -c
+            - wget https://raw.githubusercontent.com/joron1827/Stock_docs_classify/main/crawler_using_db_hdfs/crawler.py -O /tmp/crawler.py && wget https://raw.githubusercontent.com/joron1827/Stock_docs_classify/main/crawler_using_db_hdfs/dbHadoop.py -O /tmp/dbHadoop.py && 
+            wget https://raw.githubusercontent.com/joron1827/Stock_docs_classify/main/crawler_using_db_hdfs/main.py -O /tmp/main.py && 
+            python /tmp/main.py
+            args:   
+              - -dbUser
+              - "$(DBUSER)"
+              - -dbPasswd
+              - "$(PASSWD)"
+              - -dbHost
+              - "$(DBHOST)"
+              - -dbName
+              - "$(DBNAME)"
+              - -hdfs
+              - "$(HDFS)"
+              - -hdfsPort
+              - "$(HDFSPORT)"
+              - -hdfsPath
+              - "$(HDFSPATH)"
+          restartPolicy: OnFailure
