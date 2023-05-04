@@ -22,12 +22,13 @@ def update_page_num(codes, page, checkSum, user,passwd,host,db):
     import pandas as pd
     
     engine = create_engine(f'postgresql://{user}:{passwd}@{host}/{db}')
-    engine.connect()
+    if checkSum == False: query = f'UPDATE crawling_docs SET page_num = {page} WHERE stock_code = "{codes}"'
+    if checkSum == True: query = f'UPDATE crawling_docs SET check_num = 1 WHERE stock_code = "{codes}"'
+
+    with engine.connect() as conn:
+        result = conn.execute(query)
     
-    if checkSum == False: query = f'UPDATE crawling_docs SET page_num = {page} WHERE stock_code = {codes}'
-    if checkSum == True: query = f'UPDATE crawling_docs SET check_num = 1 WHERE stock_code = {codes}'
-    
-    return
+    return result
 
 def save_hdfs(data, hdfs, port, path):
     
