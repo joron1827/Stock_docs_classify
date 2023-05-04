@@ -1,9 +1,9 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: naverTextCrawler
+  name: naver-text-crawler
 spec:
-  schedule: "*/1 * * * *"
+  schedule: "*/10 * * * *"
   jobTemplate:
     spec:
       template:
@@ -15,58 +15,42 @@ spec:
             env:
             - name: DBUSER
               valueFrom:
-                sercretKeyRef:
+                secretKeyRef:
                   name: passed-in-args
                   key: user
             - name: PASSWD
               valueFrom:
-                sercretKeyRef:
+                secretKeyRef:
                   name: passed-in-args
                   key: passwd
             - name: DBHOST
               valueFrom:
-                sercretKeyRef:
+                secretKeyRef:
                   name: passed-in-args
                   key: dbhost
             - name: DBNAME
               valueFrom:
-                sercretKeyRef:
+                secretKeyRef:
                   name: passed-in-args
                   key: dbname
             - name: HDFS
               valueFrom:
-                sercretKeyRef:
+                secretKeyRef:
                   name: passed-in-args
                   key: hdfs
             - name: HDFSPORT
               valueFrom:
-                sercretKeyRef:
+                secretKeyRef:
                   name: passed-in-args
                   key: hdfsport
             - name: HDFSPATH
               valueFrom:
-                sercretKeyRef:
+                secretKeyRef:
                   name: passed-in-args
                   key: hdfspath
             command:
             - sh
             - -c
-            - wget https://raw.githubusercontent.com/joron1827/Stock_docs_classify/main/crawler_using_db_hdfs/crawler.py -O /tmp/crawler.py && wget https://raw.githubusercontent.com/joron1827/Stock_docs_classify/main/crawler_using_db_hdfs/dbHadoop.py -O /tmp/dbHadoop.py && 
-            wget https://raw.githubusercontent.com/joron1827/Stock_docs_classify/main/crawler_using_db_hdfs/main.py -O /tmp/main.py && 
-            python /tmp/main.py
-            args:   
-              - -dbUser
-              - "$(DBUSER)"
-              - -dbPasswd
-              - "$(PASSWD)"
-              - -dbHost
-              - "$(DBHOST)"
-              - -dbName
-              - "$(DBNAME)"
-              - -hdfs
-              - "$(HDFS)"
-              - -hdfsPort
-              - "$(HDFSPORT)"
-              - -hdfsPath
-              - "$(HDFSPATH)"
+            - >
+              git clone https://github.com/joron1827/Stock_docs_classify.git && python ./Stock_docs_classify/crawler_using_db_hdfs/main.py -dbUser ${DBUSER} -dbPasswd ${PASSWD} -dbHost ${DBHOST} -dbName ${DBNAME} -hdfs ${HDFS} -hdfsPort ${HDFSPORT} -hdfsPath ${HDFSPATH}
           restartPolicy: OnFailure
