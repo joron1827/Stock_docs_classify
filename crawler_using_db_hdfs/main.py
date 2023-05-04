@@ -26,12 +26,15 @@ def main(argv, args) :
     print(f'args.dbPasswd : ', args.dbPasswd)
     print(f'args.dbHost : ', args.dbHost)
     print(f'args.dbName : ', args.dbName)
+    print(f'args.dbName : ', args.hdfs)
+    print(f'args.dbName : ', args.hdfsPort)
+    print(f'args.dbName : ', args.hdfsPath)
     print('\n')
     
     codes, page = dbHadoop.get_page_num(str(args.dbUser), str(args.dbPasswd),str(args.dbHost),str(args.dbName))
     data, page, checkSum = crawler.ns_text_crawler(codes, page, term = 10)
     dbHadoop.update_page_num(codes, page, checkSum, str(args.dbUser), str(args.dbPasswd), str(args.dbHost),str(args.dbName))
-    dbHadoop.save_hdfs(data, checkSum, str(args.hdfs), int(args.hdfsPort), str(args.hdfs)):
+    dbHadoop.save_hdfs(data, str(args.hdfs), int(args.hdfsPort), str(args.hdfs))
     
 if __name__ == '__main__' :
     argv = sys.argv

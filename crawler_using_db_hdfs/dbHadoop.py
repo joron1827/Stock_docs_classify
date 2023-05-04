@@ -44,7 +44,7 @@ def save_hdfs(data, hdfs, port, path):
     file_name = str(now) + "text.parquet"
     hdfsPath = path + file_name
     
-    with hdfs.open(path, 'wb') as f:
+    with hdfs.open(hdfsPath, 'wb') as f:
        pq.write_table(table, f)
     
     hdfs.close()

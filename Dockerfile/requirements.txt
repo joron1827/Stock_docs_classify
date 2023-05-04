@@ -1,0 +1,8 @@
+pyarrow
+bs4
+pandas
+requests
+sqlalchemy
+
+
+
