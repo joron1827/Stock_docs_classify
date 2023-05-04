@@ -1,5 +1,5 @@
 
-## 페이지 번호 쿼리 작성
+## get page from database
 def get_page_num(user,passwd,host,db):
     
     from sqlalchemy import create_engine
