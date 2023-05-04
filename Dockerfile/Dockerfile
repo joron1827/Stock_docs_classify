@@ -8,6 +8,7 @@ RUN apt-get update && \
         libkrb5-dev \
         libssl-dev \
         libffi-dev \
+        libpq-dev \
         wget \
         curl \
         git \
@@ -40,6 +41,8 @@ RUN tar -xzf hadoop-3.3.2.tar.gz && \
 ENV CLASSPATH $HADOOP_HOME/etc/hadoop:$HADOOP_HOME/share/hadoop/common/*:$HADOOP_HOME/share/hadoop/hdfs/*:$HADOOP_HOME/share/hadoop/mapreduce/*:$HADOOP_HOME/share/hadoop/tools/lib/*:$ARROW_LIBHDFS_DIR:/usr/local/lib/python3.8/site-packages/pyarrow/lib
 
 # Install PyArrow
+RUN pip install --upgrade pip
+RUN pip install psycopg2
 RUN pip install -r requirements.txt
 
 # Set the entrypoint to start a bash shell
