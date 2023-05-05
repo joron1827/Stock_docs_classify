@@ -41,7 +41,7 @@ def save_hdfs(data, hdfs, port, path):
     import pyarrow.parquet as pq
     
     now = datetime.now()
-    now.strftime('%y-%m-%d-%h-%M-%s')
+    now = now.strftime('%y-%m-%d-%h-%M-%s')
     table = pa.Table.from_pandas(data)
     
     # Connect to HDFS
