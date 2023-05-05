@@ -18,12 +18,13 @@ def get_page_num(user,passwd,host,db):
 
 def update_page_num(codes, page, checkSum, user,passwd,host,db):
     
-    from sqlalchemy import create_engine
     import pandas as pd
-    
-    engine = create_engine(f'postgresql://{user}:{passwd}@{host}/{db}')
-
     from sqlalchemy import Table,  MetaData, create_engine, update
+
+    engine = create_engine(f'postgresql://{user}:{passwd}@{host}/{db}')
+    engine.connect()
+
+    
  
     
     metadata = MetaData()
@@ -31,6 +32,7 @@ def update_page_num(codes, page, checkSum, user,passwd,host,db):
 
     if checkSum == False: u = update(CRAWL).values({"page_num": page}).where(CRAWL.c.stock_code == codes)
     if checkSum == True: u = update(CRAWL).values({"check_num": 1}).where(CRAWL.c.stock_code == codes)
+    
     engine.execute(u)
     
     return 
