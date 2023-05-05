@@ -9,7 +9,7 @@ def get_page_num(hdfs, port, path):
     # Connect to HDFS
     hdfs = pa.HadoopFileSystem(host=hdfs, port=int(port))
     
-    file_name = "code/code_info.parquet"
+    file_name = "code/code_info.parquet/*.parquet"
     hdfsPath = path + file_name
     
     with hdfs.open(hdfsPath) as f:
@@ -30,21 +30,24 @@ def update_page_num(codes, page, checkSum, hdfs, port, path):
 
     hdfs = pa.HadoopFileSystem(host=hdfs, port=int(port))
     
-    file_name = "code/code_info.parquet"
+    file_name = "code/code_info.parquet/*.parquet"
     hdfsPath = path + file_name
 
     with hdfs.open(hdfsPath) as f:
         table = pq.read_table(table, f)
         df = table.to_pandas()
+    hdfs.close()
 
-        if checkSum == False:
-            df = df.loc[df['stock_code'] == codes, 'page_num'] = page
+    if checkSum == False:
+        df = df.loc[df['stock_code'] == codes, 'page_num'] = page
 
-        if checkSum == True:
-            df = df.loc[df['stock_code'] == codes, 'check_num'] = 1
+    if checkSum == True:
+        df = df.loc[df['stock_code'] == codes, 'check_num'] = 1
 
+    hdfs = pa.HadoopFileSystem(host=hdfs, port=int(port))
+    new_table = pa.Table.from_pandas(df)
 
-        new_table = pa.Table.from_pandas(df)
+    with hdfs.open(hdfsPath) as f:
         pq.write_table(new_table, f)
 
     hdfs.close()
