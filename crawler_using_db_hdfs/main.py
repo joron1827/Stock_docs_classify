@@ -36,7 +36,7 @@ def main(argv, args) :
     ## crawling 500 pages for each batch, batch start every 10 mins
     data, page, checkSum = crawler.ns_text_crawler(codes, page, term = 10)
     dbHadoop.update_page_num(codes, page, checkSum, str(args.dbUser), str(args.dbPasswd), str(args.dbHost),str(args.dbName))
-    dbHadoop.save_hdfs(data, str(args.hdfs), int(args.hdfsPort), str(args.hdfs))
+    dbHadoop.save_hdfs(data, str(args.hdfs), int(args.hdfsPort), str(args.hdfsPath))
     
 if __name__ == '__main__' :
     argv = sys.argv
