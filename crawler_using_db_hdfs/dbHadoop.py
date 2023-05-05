@@ -22,13 +22,18 @@ def update_page_num(codes, page, checkSum, user,passwd,host,db):
     import pandas as pd
     
     engine = create_engine(f'postgresql://{user}:{passwd}@{host}/{db}')
-    if checkSum == False: query = f'UPDATE crawling_docs SET page_num = {page} WHERE stock_code = {codes}'
-    if checkSum == True: query = f'UPDATE crawling_docs SET check_num = 1 WHERE stock_code = {codes}'
 
-    with engine.connect() as conn:
-        result = conn.execute(query)
+    from sqlalchemy import Table, Column, Integer, String, MetaData, create_engine, update, text
+ 
     
-    return result
+    metadata = MetaData()
+    CRAWL = Table('crawling_docs', metadata, autoload=True, autoload_with=engine)
+
+    if checkSum == False: u = update(CRAWL).values({"page_num": page}).where(CRAWL.c.stock_code == codes)
+    if checkSum == True: u = update(CRAWL).values({"check_num": 1}).where(CRAWL.c.stock_code == codes)
+    engine.execute(u)
+    
+    return 
 
 def save_hdfs(data, hdfs, port, path):
     
