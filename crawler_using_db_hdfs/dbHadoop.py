@@ -34,7 +34,7 @@ def update_page_num(codes, page, checkSum, user,passwd,host,db):
     conn.execute(u)
 
     sql = text("SELECT page_num from crawling_docs where stock_code == codes ")
-    result = engine.execute(sql).fetchall()
+    result = conn.execute(sql).fetchall()
  
     # View the records
     for record in result:
