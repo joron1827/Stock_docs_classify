@@ -23,11 +23,11 @@ def update_page_num(codes, page, checkSum, user,passwd,host,db):
     
     engine = create_engine(f'postgresql://{user}:{passwd}@{host}/{db}')
 
-    from sqlalchemy import Table, Column, Integer, String, MetaData, create_engine, update, text
+    from sqlalchemy import Table,  MetaData, create_engine, update
  
     
     metadata = MetaData()
-    CRAWL = Table('crawling_docs', metadata, autoload=True, autoload_with=engine)
+    CRAWL = Table('crawling_docs', metadata, autoload_with=engine)
 
     if checkSum == False: u = update(CRAWL).values({"page_num": page}).where(CRAWL.c.stock_code == codes)
     if checkSum == True: u = update(CRAWL).values({"check_num": 1}).where(CRAWL.c.stock_code == codes)
