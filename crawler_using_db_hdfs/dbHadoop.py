@@ -1,43 +1,55 @@
 
 ## get page from database
-def get_page_num(user,passwd,host,db):
+def get_page_num(hdfs, port, path):
     
-    from sqlalchemy import create_engine
+    import pyarrow as pa
+    import pyarrow.parquet as pq
     import pandas as pd
     
-    engine = create_engine(f'postgresql://{user}:{passwd}@{host}/{db}')
-    engine.connect()
+    # Connect to HDFS
+    # HDFS 경로 설정
+    hdfs_path = f"hdfs://{hdfs}:{port}/{path}code/code_info.parquet"
 
-    query = """
-    SELECT stock_code, page_num FROM crawling_docs WHERE check_num = 0 ORDER BY page_num ASC;
-    """
+    # HDFS에 저장된 Parquet 파일 읽기
+    fs = pa.hdfs.connect()
+    table = pq.read_table(hdfs_path, filesystem=fs)
+
+    # PyArrow Table을 Pandas DataFrame으로 변환
+    df = table.to_pandas()
     
-    df=pd.read_sql(query, con=engine)
-    codes, page = df.values[0]
-    print("codes와 page를 찾았습니다.",codes,page)
-    return codes, page
+    # check_num이 1이 아닌 종목만 추출
+    codes, page = df[df.check_num != 1].loc[0,['stock_code','page_num']].values
 
-def update_page_num(codes, page, checkSum, user,passwd,host,db):
+    return str(codes), int(page)
+
+def update_page_num(codes, page, checkSum, hdfs, port, path):
     
-    from sqlalchemy import Table, Column, Integer, String, MetaData, create_engine, update, text
+    import pyarrow as pa
+    import pyarrow.parquet as pq
+    import pandas as pd
 
-    engine = create_engine(f'postgresql://{user}:{passwd}@{host}/{db}')
-    conn = engine.connect()
+    # Connect to HDFS
+    # HDFS 경로 설정
+    hdfs_path = f"hdfs://{hdfs}:{port}/{path}code/code_info.parquet"
 
-    metadata = MetaData()
-    CRAWL = Table('crawling_docs', metadata, autoload_with=engine)
+    # HDFS에 저장된 Parquet 파일 읽기
+    fs = pa.hdfs.connect()
+    table = pq.read_table(hdfs_path, filesystem=fs)
 
-
+    # PyArrow Table을 Pandas DataFrame으로 변환
+    df = table.to_pandas()
 
     if checkSum == False:
-        print(type(codes), type(page))
-        print('page를 저장합니다.') 
-        u = update(CRAWL).where(CRAWL.c.stock_code == codes).values({"page_num": page})
-        conn.execute(u)
-    if checkSum == True: 
-        print('마지막 페이지 도달')
-        u = update(CRAWL).values({"check_num": 1}).where(CRAWL.c.stock_code == codes)
-        conn.execute(u)
+        df.loc[df['stock_code'] == codes, 'page_num'] = page
+
+    if checkSum == True:
+        df.loc[df['stock_code'] == codes, 'check_num'] = 1
+
+    # 업데이트된 Pandas DataFrame을 PyArrow Table로 변환
+    table = pa.Table.from_pandas(df)
+
+    # 업데이트된 PyArrow Table을 Parquet 파일로 저장
+    pq.write_table(table, hdfs_path, filesystem=fs)
     
     return 
 
