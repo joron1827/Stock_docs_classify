@@ -28,7 +28,9 @@ def update_page_num(codes, page, checkSum, user,passwd,host,db):
     CRAWL = Table('crawling_docs', metadata, autoload_with=engine)
 
 
+
     if checkSum == False:
+        print(type(codes), type(page))
         print('page를 저장합니다.') 
         u = update(CRAWL).where(CRAWL.c.stock_code == codes).values({"page_num": page})
         conn.execute(u)
