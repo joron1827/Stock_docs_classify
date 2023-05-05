@@ -36,12 +36,14 @@ def update_page_num(codes, page, checkSum, hdfs, port, path):
     with hdfs.open(hdfsPath, 'rb') as f:
         table = pq.read_table(table, f)
         df = table.to_pandas()
-
+    hdfs.close()
+    
     if checkSum == False:
         df = df.loc[df['stock_code'] == codes, 'page_num'] = page
 
     if checkSum == True:
         df = df.loc[df['stock_code'] == codes, 'check_num'] = 1
+
 
     table = pa.Table.from_pandas(df)
     
