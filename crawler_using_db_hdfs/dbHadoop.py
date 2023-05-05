@@ -14,6 +14,7 @@ def get_page_num(user,passwd,host,db):
     
     df=pd.read_sql(query, con=engine)
     codes, page = df.values[0]
+    print("codes와 page를 찾았습니다.",codes,page)
     return codes, page
 
 def update_page_num(codes, page, checkSum, user,passwd,host,db):
@@ -26,20 +27,18 @@ def update_page_num(codes, page, checkSum, user,passwd,host,db):
 
     metadata = MetaData()
     CRAWL = Table('crawling_docs', metadata, autoload_with=engine)
-    page = int(page)
+    print(codes, page, checkSum)
+    print(type(codes), type(page), type(checkSum))
 
-    if checkSum == False: u = update(CRAWL).values({"page_num": page}).where(CRAWL.c.stock_code == codes)
-    if checkSum == True: u = update(CRAWL).values({"check_num": 1}).where(CRAWL.c.stock_code == codes)
 
-    result = conn.execute(u).fetchall()
-    print(result)
 
-    sql = text(f"SELECT page_num from crawling_docs where stock_code = '{codes}'")
-    result = conn.execute(sql).fetchall()
- 
-    # View the records
-    for record in result:
-        print("\n", record)
+    if checkSum == False:
+        print('page를 저장합니다.') 
+        u = update(CRAWL).values({"page_num": page}).where(CRAWL.c.stock_code == codes)
+    if checkSum == True: 
+        print('마지막 페이지 도달')
+        u = update(CRAWL).values({"check_num": 1}).where(CRAWL.c.stock_code == codes)
+    conn.execute(u)
     
     return 
 
