@@ -13,7 +13,7 @@ def get_page_num(hdfs, port, path):
     hdfsPath = path + file_name
     
     with hdfs.open(hdfsPath) as f:
-        table = pq.read_table(table, f)
+        table = pq.read_table(f)
         df = table.to_pandas()    
     hdfs.close()
     
