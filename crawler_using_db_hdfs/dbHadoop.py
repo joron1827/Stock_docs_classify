@@ -30,7 +30,7 @@ def update_page_num(codes, page, checkSum, user,passwd,host,db):
 
     if checkSum == False:
         print('page를 저장합니다.') 
-        u = update(CRAWL).values({"page_num": page}).where(CRAWL.c.stock_code == text(codes))
+        u = update(CRAWL).values({"page_num": page}).where(CRAWL.c.stock_code == codes)
         conn.execute(u)
     if checkSum == True: 
         print('마지막 페이지 도달')
