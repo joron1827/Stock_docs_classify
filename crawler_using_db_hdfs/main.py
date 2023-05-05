@@ -26,9 +26,9 @@ def main(argv, args) :
     print(f'args.dbPasswd : ', args.dbPasswd)
     print(f'args.dbHost : ', args.dbHost)
     print(f'args.dbName : ', args.dbName)
-    print(f'args.dbName : ', args.hdfs)
-    print(f'args.dbName : ', args.hdfsPort)
-    print(f'args.dbName : ', args.hdfsPath)
+    print(f'args.hdfs : ', args.hdfs)
+    print(f'args.hdfsPort : ', args.hdfsPort)
+    print(f'args.hdfsPath : ', args.hdfsPath)
     print('\n')
     
     codes, page = dbHadoop.get_page_num(str(args.dbUser), str(args.dbPasswd),str(args.dbHost),str(args.dbName))

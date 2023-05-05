@@ -20,13 +20,10 @@ def update_page_num(codes, page, checkSum, user,passwd,host,db):
     
     import pandas as pd
     from sqlalchemy import Table, Column, Integer, String, MetaData, create_engine, update, text
-    
+
     engine = create_engine(f'postgresql://{user}:{passwd}@{host}/{db}')
     conn = engine.connect()
 
-    
- 
-    
     metadata = MetaData()
     CRAWL = Table('crawling_docs', metadata, autoload_with=engine)
 
@@ -47,7 +44,7 @@ def save_hdfs(data, hdfs, port, path):
     table = pa.Table.from_pandas(data)
     
     # Connect to HDFS
-    hdfs = pa.HadoopFileSystem(host='hdfs', port=int(port))
+    hdfs = pa.HadoopFileSystem(host=hdfs, port=int(port))
     
     file_name = str(now) + "text.parquet"
     hdfsPath = path + file_name
