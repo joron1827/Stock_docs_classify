@@ -19,7 +19,6 @@ def get_page_num(user,passwd,host,db):
 
 def update_page_num(codes, page, checkSum, user,passwd,host,db):
     
-    import pandas as pd
     from sqlalchemy import Table, Column, Integer, String, MetaData, create_engine, update, text
 
     engine = create_engine(f'postgresql://{user}:{passwd}@{host}/{db}')
@@ -27,20 +26,17 @@ def update_page_num(codes, page, checkSum, user,passwd,host,db):
 
     metadata = MetaData()
     CRAWL = Table('crawling_docs', metadata, autoload_with=engine)
-    print(codes, page, checkSum)
-    print(type(codes), type(page), type(checkSum))
-
 
 
     if checkSum == False:
         print('page를 저장합니다.') 
-        u = update(CRAWL).values({"page_num": page}).where(CRAWL.c.stock_code == codes)
+        u = update(CRAWL).values({"page_num": page}).where(CRAWL.c.stock_code == text(codes))
+        conn.execute(u)
     if checkSum == True: 
         print('마지막 페이지 도달')
         u = update(CRAWL).values({"check_num": 1}).where(CRAWL.c.stock_code == codes)
-    print(u)
-    result = conn.execute(u)
-    print(result)
+        conn.execute(u)
+    
     return 
 
 def save_hdfs(data, hdfs, port, path):
