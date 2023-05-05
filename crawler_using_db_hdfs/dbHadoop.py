@@ -32,24 +32,21 @@ def update_page_num(codes, page, checkSum, hdfs, port, path):
     
     file_name = "code/code_info.parquet"
     hdfsPath = path + file_name
-    
-    with hdfs.open(hdfsPath, 'rb') as f:
+
+    with hdfs.open(hdfsPath) as f:
         table = pq.read_table(table, f)
         df = table.to_pandas()
-    hdfs.close()
-    
-    if checkSum == False:
-        df = df.loc[df['stock_code'] == codes, 'page_num'] = page
 
-    if checkSum == True:
-        df = df.loc[df['stock_code'] == codes, 'check_num'] = 1
+        if checkSum == False:
+            df = df.loc[df['stock_code'] == codes, 'page_num'] = page
+
+        if checkSum == True:
+            df = df.loc[df['stock_code'] == codes, 'check_num'] = 1
 
 
-    table = pa.Table.from_pandas(df)
-    
-    with hdfs.open(hdfsPath, 'wb') as f:
-       pq.write_table(table, f)
-    
+        new_table = pa.Table.from_pandas(df)
+        pq.write_table(new_table, f)
+        
     hdfs.close()
     
     return 
