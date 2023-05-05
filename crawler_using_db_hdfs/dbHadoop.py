@@ -12,7 +12,7 @@ def get_page_num(hdfs, port, path):
     file_name = "code/code_info.parquet"
     hdfsPath = path + file_name
     
-    with hdfs.open(hdfsPath, 'rb') as f:
+    with hdfs.open(hdfsPath) as f:
         table = pq.read_table(table, f)
         df = table.to_pandas()    
     hdfs.close()
@@ -46,7 +46,7 @@ def update_page_num(codes, page, checkSum, hdfs, port, path):
 
         new_table = pa.Table.from_pandas(df)
         pq.write_table(new_table, f)
-        
+
     hdfs.close()
     
     return 
