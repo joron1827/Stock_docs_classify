@@ -31,7 +31,7 @@ def update_page_num(codes, page, checkSum, user,passwd,host,db):
     if checkSum == False: u = update(CRAWL).values({"page_num": page}).where(CRAWL.c.stock_code == codes)
     if checkSum == True: u = update(CRAWL).values({"check_num": 1}).where(CRAWL.c.stock_code == codes)
 
-    result = conn.execute(u)
+    result = conn.execute(u).fetchall()
     print(result)
 
     sql = text(f"SELECT page_num from crawling_docs where stock_code = '{codes}'")
