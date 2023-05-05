@@ -41,12 +41,13 @@ def save_hdfs(data, hdfs, port, path):
     import pyarrow.parquet as pq
     
     now = datetime.now()
+    now.strftime('%y-%m-%d-%h-%M-%s')
     table = pa.Table.from_pandas(data)
     
     # Connect to HDFS
     hdfs = pa.HadoopFileSystem(host=hdfs, port=int(port))
     
-    file_name = str(now) + "text.parquet"
+    file_name = str(now) + ".parquet"
     hdfsPath = path + file_name
     
     with hdfs.open(hdfsPath, 'wb') as f:
