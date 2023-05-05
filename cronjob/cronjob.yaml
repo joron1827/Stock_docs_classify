@@ -52,5 +52,5 @@ spec:
             - sh
             - -c
             - >
-              git clone https://github.com/joron1827/Stock_docs_classify.git && python ./Stock_docs_classify/crawler_using_db_hdfs/main.py -dbUser ${DBUSER} -dbPasswd ${PASSWD} -dbHost ${DBHOST} -dbName ${DBNAME} -hdfs ${HDFS} -hdfsPort ${HDFSPORT} -hdfsPath ${HDFSPATH}
+              git clone https://github.com/joron1827/Stock_docs_classify.git && python ./Stock_docs_classify/crawler_using_db_hdfs/main.py -hdfs ${HDFS} -hdfsPort ${HDFSPORT} -hdfsPath ${HDFSPATH}
           restartPolicy: OnFailure
