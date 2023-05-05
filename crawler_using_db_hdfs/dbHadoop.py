@@ -38,8 +38,9 @@ def update_page_num(codes, page, checkSum, user,passwd,host,db):
     if checkSum == True: 
         print('마지막 페이지 도달')
         u = update(CRAWL).values({"check_num": 1}).where(CRAWL.c.stock_code == codes)
-    conn.execute(u)
-    
+    print(u)
+    result = conn.execute(u)
+    print(result)
     return 
 
 def save_hdfs(data, hdfs, port, path):
