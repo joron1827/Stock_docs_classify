@@ -1,13 +1,13 @@
 
 ## get page from database
-def get_page_num(hdfs, port, path):
+def get_page_num(hdfsHost, port, path):
     
     import pyarrow as pa
     import pyarrow.parquet as pq
     import pandas as pd
     
     # Connect to HDFS
-    hdfs = pa.HadoopFileSystem(host=hdfs, port=int(port))
+    hdfs = pa.HadoopFileSystem(host=hdfsHost, port=int(port))
     
     file_name = "code/code_info.parquet"
     hdfsPath = path + file_name
@@ -22,13 +22,13 @@ def get_page_num(hdfs, port, path):
 
     return str(codes), int(page)
 
-def update_page_num(codes, page, checkSum, hdfs, port, path):
+def update_page_num(codes, page, checkSum, hdfsHost, port, path):
     
     import pyarrow as pa
     import pyarrow.parquet as pq
     import pandas as pd
 
-    hdfs = pa.HadoopFileSystem(host=hdfs, port=int(port))
+    hdfs = pa.HadoopFileSystem(host=hdfsHost, port=int(port))
     
     file_name = "code/code_info.parquet"
     hdfsPath = path + file_name
@@ -44,7 +44,7 @@ def update_page_num(codes, page, checkSum, hdfs, port, path):
     if checkSum == True:
         df.loc[df['stock_code'] == codes, 'check_num'] = 1
 
-    hdfs = pa.HadoopFileSystem(host=hdfs, port=int(port))
+    hdfs = pa.HadoopFileSystem(host=hdfsHost, port=int(port))
     new_table = pa.Table.from_pandas(df)
 
     with hdfs.open(hdfsPath) as f:
