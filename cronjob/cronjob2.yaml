@@ -10,7 +10,7 @@ spec:
         spec:
           containers:
           - name: crawing
-            image: joron1827/pyarrow:v3
+            image: joron1827/pyarrow:v4
             imagePullPolicy: IfNotPresent
             env:
             - name: DBUSER
@@ -52,5 +52,5 @@ spec:
             - sh
             - -c
             - >
-              git clone https://github.com/joron1827/Stock_docs_classify.git && python ./Stock_docs_classify/crawler_using_db_hdfs/main2.py -dbUser ${DBUSER} -dbPasswd ${DBPASSWD} -dbHost ${DBHOST} -dbName ${DBNAME} -hdfs ${HDFS} -hdfsPort ${HDFSPORT} -hdfsPath ${HDFSPATH}
+              git clone https://github.com/joron1827/Stock_docs_classify.git && python ./Stock_docs_classify/crawler_using_db_hdfs/main2.py -dbUser ${DBUSER} -dbPasswd ${DBPASSWD} -dbHost ${DBHOST} -db ${DBNAME} -hdfs ${HDFS} -hdfsPort ${HDFSPORT} -hdfsPath ${HDFSPATH}
           restartPolicy: OnFailure

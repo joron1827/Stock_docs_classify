@@ -9,7 +9,7 @@ def get_page_num(user,passwd,host,db):
     engine.connect()
 
     query = """
-    SELECT stock_code, page_num FROM crawling_docs WHERE check_num = 0 ORDER BY page_num ACS;
+    SELECT stock_code, page_num FROM crawling_docs WHERE check_num = 0 ORDER BY page_num ASC;
     """
     
     df=pd.read_sql(query, con=engine)
