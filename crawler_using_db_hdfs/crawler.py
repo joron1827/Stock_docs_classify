@@ -39,7 +39,7 @@ def ns_text_crawler(codes : str, start, term):
             if len(tb[i].select('td > span')) > 0:
 
                 ## catch last page
-                s= tb[5].select('a')[0]['href']
+                s= tb[i].select('a')[0]['href']
                 real_page_num = re.findall(r'page=(\d{1,9})', s) ## actual page number
 
                 ## if catch lastpage, stop crawling and return values
