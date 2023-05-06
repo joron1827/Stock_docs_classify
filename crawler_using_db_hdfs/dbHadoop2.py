@@ -38,7 +38,7 @@ def update_page_num(codes, page, checkSum, user,passwd,host,db):
     if checkSum == True:
         df.loc[df['stock_code'] == codes, 'check_num'] = 1
     
-    df.to_sql(name='crawling_docs', con=engine, if_exists='replace')
+    df.to_sql(name='crawling_docs', con=engine, if_exists='replace', index=False)
 
     return
 
