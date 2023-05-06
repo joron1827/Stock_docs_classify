@@ -55,7 +55,7 @@ def save_hdfs(data, hdfs, port, path):
     # Connect to HDFS
     hdfs = pa.HadoopFileSystem(host=hdfs, port=int(port))
     
-    file_name = str(now) + "dbtest.parquet"
+    file_name = str(now) + "-postgres.parquet"
     hdfsPath = path + file_name
     
     with hdfs.open(hdfsPath, 'wb') as f:
