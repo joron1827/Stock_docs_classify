@@ -3,7 +3,7 @@ kind: CronJob
 metadata:
   name: naver-text-crawler
 spec:
-  schedule: "*/10 * * * *"
+  schedule: "*/15 * * * *"
   jobTemplate:
     spec:
       template:
@@ -13,26 +13,6 @@ spec:
             image: joron1827/pyarrow:v3
             imagePullPolicy: IfNotPresent
             env:
-            - name: DBUSER
-              valueFrom:
-                secretKeyRef:
-                  name: passed-in-args
-                  key: user
-            - name: PASSWD
-              valueFrom:
-                secretKeyRef:
-                  name: passed-in-args
-                  key: passwd
-            - name: DBHOST
-              valueFrom:
-                secretKeyRef:
-                  name: passed-in-args
-                  key: dbhost
-            - name: DBNAME
-              valueFrom:
-                secretKeyRef:
-                  name: passed-in-args
-                  key: dbname
             - name: HDFS
               valueFrom:
                 secretKeyRef:

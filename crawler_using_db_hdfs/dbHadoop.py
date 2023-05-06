@@ -9,18 +9,22 @@ def get_page_num(hdfsHost, port, path):
     # Connect to HDFS
     hdfs = pa.HadoopFileSystem(host=hdfsHost, port=int(port))
     
+    # code, page info path
     file_name = "code/code_info.parquet"
     hdfsPath = path + file_name
     
+    # open info file and create df to get code&page
     with hdfs.open(hdfsPath) as f:
         table = pq.read_table(f)
         df = table.to_pandas()    
     hdfs.close()
     
-    # check_num이 1이 아닌 종목만 추출
+
+    # extract codes and page not check_num == 1
     codes, page = df[df.check_num != 1].loc[0,['stock_code','page_num']].values
 
     return str(codes), int(page)
+
 
 def update_page_num(codes, page, checkSum, hdfsHost, port, path):
     
@@ -38,12 +42,16 @@ def update_page_num(codes, page, checkSum, hdfsHost, port, path):
         df = table.to_pandas()
     hdfs.close()
 
-    if checkSum == False:
-        df.loc[df['stock_code'] == codes, 'page_num'] = page
 
+    # save current page using code
+    df.loc[df['stock_code'] == codes, 'page_num'] = page
+
+    # if finish get text of last page, check_num will be 1
     if checkSum == True:
         df.loc[df['stock_code'] == codes, 'check_num'] = 1
 
+    # save new table at same file
+    
     hdfs = pa.HadoopFileSystem(host=hdfsHost, port=int(port))
     new_table = pa.Table.from_pandas(df)
 

@@ -25,8 +25,8 @@ def main(argv, args) :
     
     codes, page = dbHadoop.get_page_num(str(args.hdfs), int(args.hdfsPort), str(args.hdfsPath))
 
-    ## crawling 500 pages for each batch, batch start every 10 mins
-    data, page, checkSum = crawler.ns_text_crawler(str(codes), int(page), term = 10)
+    ## crawling 500 pages for each batch, batch start every 15 mins
+    data, page, checkSum = crawler.ns_text_crawler(str(codes), int(page), term = 500)
     dbHadoop.update_page_num(str(codes), int(page), int(checkSum), str(args.hdfs), int(args.hdfsPort), str(args.hdfsPath))
     dbHadoop.save_hdfs(data, str(args.hdfs), int(args.hdfsPort), str(args.hdfsPath))
     
