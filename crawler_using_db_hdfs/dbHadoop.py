@@ -47,7 +47,7 @@ def update_page_num(codes, page, checkSum, hdfsHost, port, path):
     hdfs = pa.HadoopFileSystem(host=hdfsHost, port=int(port))
     new_table = pa.Table.from_pandas(df)
 
-    with hdfs.open(hdfsPath) as f:
+    with hdfs.open(hdfsPath, 'w') as f:
         pq.write_table(new_table, f)
 
     hdfs.close()
