@@ -32,16 +32,19 @@ def ns_text_crawler(codes : str, start, term):
         table = soup.find('table', {'class' : 'type2'})
         tb = table.select('tbody > tr')
         
-        ## catch last page
-        s= tb[5].select('a')[0]['href']
-        real_page_num = re.findall(r'page=(\d{1,9})', s) ## actual page number
 
-        ## if catch lastpage, stop crawling and return values
-        if str(page) != real_page_num[0]: return result_df, current_page, True 
         
         ## save text at result_df
         for i in range(2, len(tb)):
             if len(tb[i].select('td > span')) > 0:
+
+                ## catch last page
+                s= tb[5].select('a')[0]['href']
+                real_page_num = re.findall(r'page=(\d{1,9})', s) ## actual page number
+
+                ## if catch lastpage, stop crawling and return values
+                if str(page) != real_page_num[0]: return result_df, current_page, True 
+
                 date = tb[i].select('td > span')[0].text
                 title = tb[i].select('td.title > a')[0]['title']
                 views = tb[i].select('td > span')[1].text
