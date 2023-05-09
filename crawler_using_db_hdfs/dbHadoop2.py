@@ -51,7 +51,7 @@ def save_hdfs(data, hdfs, port, path):
     import pyarrow.parquet as pq
     
     now = datetime.now()
-    now = now.strftime('%y-%m-%d, %H:%M:%S')
+    now = now.strftime('%y/%m/%d, %H:%M:%S')
     table = pa.Table.from_pandas(data)
     
     print("수집된 데이터 샘플: ")
@@ -64,7 +64,7 @@ def save_hdfs(data, hdfs, port, path):
 
     print("저장될 파일 이름 : ", file_name)
     print("저장될 파일 경로: ", path)
-    
+
     hdfsPath = path + file_name
     
     with hdfs.open(hdfsPath, 'wb') as f:
