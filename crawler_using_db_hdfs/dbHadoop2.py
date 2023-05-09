@@ -15,6 +15,8 @@ def get_page_num(user,passwd,host,db):
     df=pd.read_sql(query, con=engine)
     codes, page = df.values[0]
 
+    print("code :", codes , "page: ", page)
+
     return str(codes), int(page)
 
 
@@ -52,10 +54,17 @@ def save_hdfs(data, hdfs, port, path):
     now = now.strftime('%y-%m-%d, %H:%M:%S')
     table = pa.Table.from_pandas(data)
     
+    print("수집된 데이터 샘플: ")
+    print(data.head())
+
     # Connect to HDFS
     hdfs = pa.HadoopFileSystem(host=hdfs, port=int(port))
     
     file_name = str(now) + "-postgres.parquet"
+
+    print("저장될 파일 이름 : ", file_name)
+    print("저장될 파일 경로: ", path)
+    
     hdfsPath = path + file_name
     
     with hdfs.open(hdfsPath, 'wb') as f:
