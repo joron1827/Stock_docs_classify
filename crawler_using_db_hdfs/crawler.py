@@ -5,7 +5,8 @@ def ns_text_crawler(codes : str, start, term):
     import pandas as pd
     from bs4 import BeautifulSoup
     import re
-    
+    from time import time
+
     HEADERS = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
     "Accept-Encoding": "gzip, deflate, br",
@@ -23,6 +24,9 @@ def ns_text_crawler(codes : str, start, term):
     
     result_df = pd.DataFrame([])
     current_page = start
+
+    t_start = time()
+
     ## begin crawling between start page and term
     for page in range(start+1, start+1+term):
         
@@ -53,6 +57,10 @@ def ns_text_crawler(codes : str, start, term):
                 table = pd.DataFrame({'code' : codes, 'date':[date], 'title' : [title], 'views': [views], 'pos' : [pos], 'neg' : [neg]})
                 result_df = pd.concat([result_df,table], axis=0)
         current_page = page
-                
+    
+    t_end = time()
+
+    print('crawling..., took %.3f second' % (t_end - t_start))
+    
     ## return values
     return result_df, current_page, False

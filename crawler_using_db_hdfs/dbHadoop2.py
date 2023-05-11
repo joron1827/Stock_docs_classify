@@ -49,13 +49,14 @@ def save_hdfs(data, hdfs, port, path):
     from datetime import datetime
     import pyarrow as pa
     import pyarrow.parquet as pq
-    
+    from time import time
+
+    t_start = time()
+
     now = datetime.now()
     now = now.strftime('%y-%m-%d-%H-%M-%S')
     table = pa.Table.from_pandas(data)
-    
-    print("수집된 데이터 샘플: ")
-    print(data.head())
+
 
     # Connect to HDFS
     hdfs = pa.HadoopFileSystem(host=hdfs, port=int(port))
@@ -71,3 +72,6 @@ def save_hdfs(data, hdfs, port, path):
        pq.write_table(table, f)
     
     hdfs.close()
+
+    t_end = time()
+    print('save data at hdfs..., took %.3f second' % (t_end - t_start))
