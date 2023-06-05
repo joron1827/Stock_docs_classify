@@ -68,4 +68,4 @@ def process_text():
     return send_file(image_stream, mimetype='image/png')
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0')
