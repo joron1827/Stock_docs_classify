@@ -1,6 +1,6 @@
 import os, sys, pickle
 import argparse, sys
-
+import pandas as pd
 import crawler
 import get_db_connector
 
@@ -17,7 +17,30 @@ parser.add_argument('-hdfsPath', help=' : Please set hdfs save path')
 
 args = parser.parse_args()
 
-def main(argv, args) : 
+from pyspark import SparkConf, SparkContext
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import input_file_name
+
+conf = (SparkConf().setMaster("k8s://https://192.168.219.100:6443") # Your master address name
+        .set("spark.kubernetes.container.image", "joron1827/pyspark:v3") # Spark image name
+        .set("spark.driver.port", "2222") # Needs to match svc
+        .set("spark.driver.blockManager.port", "7777")
+        .set("spark.driver.host", "driver-service.spark-joban.svc.cluster.local") # Needs to match svc
+        .set("spark.driver.bindAddress", "0.0.0.0")
+        .set("spark.kubernetes.namespace", "spark-joban")
+        .set("spark.kubernetes.authenticate.driver.serviceAccountName", "spark-joban")
+        .set("spark.kubernetes.authenticate.serviceAccountName", "spark-joban")
+        .set("spark.executor.instances", "4")
+        .set("spark.kubernetes.container.image.pullPolicy", "IfNotPresent")
+        .set("spark.app.name", "SparkStream")
+        .set("spark.executor.cores", "4")
+        .set("spark.executor.memory", "16g"))
+
+
+spark = SparkSession.builder.config(conf=conf).getOrCreate()
+
+
+def main(argv, args, spark) : 
     print('\n')
     print(f'argv : ', argv)
     print(f'args : ', args)
@@ -31,16 +54,14 @@ def main(argv, args) :
     print(f'args.hdfsPath : ', args.hdfsPath)
     print('\n')
     
-    codes, page = get_db_connector.get_code(str(args.dbUser), str(args.dbPasswd), str(args.dbHost),str(args.db))
-
-    code, dateTime = get_db_connect.get_last_time(str(args.dbUser), str(args.dbPasswd), str(args.dbHost),str(args.db))
-    ## crawling 500 pages for each batch, batch start every 15 mins
-
-    data, page, checkSum = crawler.ns_text_crawler(str(codes), term = 100, date)
-
-    dbHadoop.save_hdfs(data, str(args.hdfs), int(args.hdfsPort), str(args.hdfsPath))
+    ## get Stock Code and Last time of text data.
+    code, dateTime = get_db_connector.get_last_time(str(args.dbUser), str(args.dbPasswd), str(args.dbHost),str(args.db))
     
-    dbHadoop.update_page_num(str(codes), int(page), int(checkSum), str(args.dbUser), str(args.dbPasswd), str(args.dbHost),str(args.db))
+    result_df = pd.DataFrame({})
+    for i, j in zip(code, dateTime):
+        result_df = crawler.ns_text_crawler(i, j, result_df)
+
+       
 
 if __name__ == '__main__' :
     argv = sys.argv
