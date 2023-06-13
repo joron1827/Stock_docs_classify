@@ -2,7 +2,7 @@ import os, sys, pickle
 import argparse, sys
 
 import crawler
-import dbHadoop2
+import get_db_connector
 
 
 parser = argparse.ArgumentParser()
@@ -31,14 +31,16 @@ def main(argv, args) :
     print(f'args.hdfsPath : ', args.hdfsPath)
     print('\n')
     
-    codes, page = dbHadoop2.get_page_num(str(args.dbUser), str(args.dbPasswd), str(args.dbHost),str(args.db))
+    codes, page = get_db_connector.get_code(str(args.dbUser), str(args.dbPasswd), str(args.dbHost),str(args.db))
 
+    code, dateTime = get_db_connect.get_last_time(str(args.dbUser), str(args.dbPasswd), str(args.dbHost),str(args.db))
     ## crawling 500 pages for each batch, batch start every 15 mins
-    data, page, checkSum = crawler.ns_text_crawler(str(codes), int(page), term = 1500)
 
-    dbHadoop2.save_hdfs(data, str(args.hdfs), int(args.hdfsPort), str(args.hdfsPath))
+    data, page, checkSum = crawler.ns_text_crawler(str(codes), term = 100, date)
+
+    dbHadoop.save_hdfs(data, str(args.hdfs), int(args.hdfsPort), str(args.hdfsPath))
     
-    dbHadoop2.update_page_num(str(codes), int(page), int(checkSum), str(args.dbUser), str(args.dbPasswd), str(args.dbHost),str(args.db))
+    dbHadoop.update_page_num(str(codes), int(page), int(checkSum), str(args.dbUser), str(args.dbPasswd), str(args.dbHost),str(args.db))
 
 if __name__ == '__main__' :
     argv = sys.argv
