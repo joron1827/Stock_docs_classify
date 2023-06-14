@@ -1,5 +1,5 @@
 
-def ns_text_crawler(codes : str, start, term):
+def ns_text_crawler(codes : str, date_last, result_df):
     
     import requests
     import pandas as pd
@@ -22,45 +22,38 @@ def ns_text_crawler(codes : str, start, term):
     "User-Agent": "Mozilla/5.0"
     }
     
-    result_df = pd.DataFrame([])
-    current_page = start
 
-    t_start = time()
 
-    ## begin crawling between start page and term
-    for page in range(start+1, start+1+term):
-        
-        url = "https://finance.naver.com/item/board.naver?code=%s&page=%s" %(codes, str(page))    
+    start = 1
+
+    for page in range(start, 100):
+        url = "https://finance.naver.com/item/board.naver?code=%s&page=%s" %(str(codes), str(page))
         html = requests.get(url, headers=HEADERS).content
         soup = BeautifulSoup(html.decode('euc-kr', 'replace'), 'html.parser')
-        table = soup.find('table', {'class' : 'type2'})
-        tb = table.select('tbody > tr')
-        
-
-        
+        table = soup.find('table', {'class': 'type2'})
+        try:
+            tb = table.select('tbody > tr')
+        except:
+            print(url)
+            return result_df
         ## save text at result_df
         for i in range(2, len(tb)):
             if len(tb[i].select('td > span')) > 0:
-
                 ## catch last page
                 s= tb[i].select('a')[0]['href']
                 real_page_num = re.findall(r'page=(\d{1,9})', s) ## actual page number
 
                 ## if catch lastpage, stop crawling and return values
-                if str(page) != real_page_num[0]: return result_df, current_page, True 
+                # if str(page) != real_page_num[0]: return result_df, current_page, True 
 
                 date = tb[i].select('td > span')[0].text
+                if(datetime.strptime(date) < datetime.strptime(date_last)):
+                    print(codes)
+                    return result_df
                 title = tb[i].select('td.title > a')[0]['title']
                 views = tb[i].select('td > span')[1].text
                 pos = tb[i].select('td > strong')[0].text
                 neg = tb[i].select('td > strong')[1].text
                 table = pd.DataFrame({'code' : codes, 'date':[date], 'title' : [title], 'views': [views], 'pos' : [pos], 'neg' : [neg]})
                 result_df = pd.concat([result_df,table], axis=0)
-        current_page = page
-    
-    t_end = time()
-
-    print('crawling..., took %.3f second' % (t_end - t_start))
-    
-    ## return values
-    return result_df, current_page, False
+    return result_df

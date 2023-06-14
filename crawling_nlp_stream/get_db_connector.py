@@ -9,15 +9,13 @@ def get_code(user,passwd,host,db):
     engine.connect()
 
     query = """
-    SELECT stock_code, page_num FROM crawling_docs;
+    SELECT stock_code FROM crawling_docs;
     """
     
     df=pd.read_sql(query, con=engine)
-    codes, page = df.values[0]
+    codes = df['stock_code'].values()
 
-    print("code :", codes , "page: ", page)
-
-    return str(codes), int(page)
+    return codes
 
 def get_last_time(user,passwd,host,db):
 
@@ -37,8 +35,9 @@ def get_last_time(user,passwd,host,db):
     """
     
     df=pd.read_sql(query, con=engine)
-    codes, page = df.values[0]
-    
+    codes = df['code'].values
+    date = df['date'].values
+
     return str(codes), str(page)
 
 def update_text(df, user,passwd,host,db):
