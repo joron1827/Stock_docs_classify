@@ -1,3 +1,9 @@
+# crawling initial text data
+
+* Get naver finance text data using pyarrow and cronjob.
+* save information of Stock code, crawled pages at Postgresql after every cronjob.
+
+
 ## dbHadoop
 
 * get stock infomation from save parquet file
