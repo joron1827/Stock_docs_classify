@@ -1,4 +1,5 @@
-# Functions for crawling text data of Naver Stock Community
+# crawling initial text data
+
 
 * We are going to crawl text data of Naver Stock Community, (belongs KOSPI)
 * These Functions should be working on K8s system via Cronjob
@@ -6,6 +7,7 @@
 * Text data will be saved at hdfs using pyarrow
 
 ---
+
 ## dbHadoop
 
 * get stock infomation from save parquet file
